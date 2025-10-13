@@ -38,18 +38,18 @@ export function Stepper({ currentStep, totalSteps, language }: StepperProps) {
       </div>
 
       {/* Steps */}
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start overflow-x-auto pb-4">
         {steps.map((step, index) => {
           const isCompleted = step.number < currentStep
           const isCurrent = step.number === currentStep
           const isUpcoming = step.number > currentStep
 
           return (
-            <div key={step.number} className="flex flex-col items-center flex-1">
+            <div key={step.number} className="flex flex-col items-center flex-1 min-w-0 px-1">
               {/* Step Circle */}
               <div className="relative mb-3">
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
+                  className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold transition-all duration-300 ${
                     isCompleted
                       ? "bg-gradient-to-r from-[#CADCFF] to-[#C1FFDD] text-black shadow-lg"
                       : isCurrent
@@ -58,29 +58,29 @@ export function Stepper({ currentStep, totalSteps, language }: StepperProps) {
                   }`}
                 >
                   {isCompleted ? (
-                    <Check className="h-5 w-5" />
+                    <Check className="h-3 w-3 sm:h-5 sm:w-5" />
                   ) : (
                     step.number
                   )}
                 </div>
                 
-                {/* Connection Line */}
+                {/* Connection Line - Hidden on mobile */}
                 {index < steps.length - 1 && (
                   <div
-                    className={`absolute top-6 left-12 w-full h-0.5 transition-all duration-300 ${
+                    className={`hidden sm:block absolute top-4 sm:top-6 left-8 sm:left-12 w-full h-0.5 transition-all duration-300 ${
                       isCompleted
                         ? "bg-gradient-to-r from-[#CADCFF] to-[#C1FFDD]"
                         : "bg-gray-200"
                     }`}
-                    style={{ width: "calc(100% - 3rem)" }}
+                    style={{ width: "calc(100% - 2rem)" }}
                   />
                 )}
               </div>
 
               {/* Step Title */}
-              <div className="text-center max-w-24">
+              <div className="text-center max-w-16 sm:max-w-24">
                 <p
-                  className={`text-xs font-medium transition-colors duration-300 ${
+                  className={`text-xs font-medium transition-colors duration-300 leading-tight ${
                     isCurrent
                       ? "text-black font-semibold"
                       : isCompleted

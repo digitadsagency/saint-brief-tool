@@ -254,27 +254,27 @@ export default function BrandBriefPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#CADCFF] to-[#C1FFDD] py-4">
+      <header className="bg-gradient-to-r from-[#CADCFF] to-[#C1FFDD] py-2 sm:py-4">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
               <Image
                 src="/saint-logo.png"
                 alt="SAINT Logo"
-                width={120}
-                height={120}
-                className="object-contain"
+                width={80}
+                height={80}
+                className="object-contain sm:w-[120px] sm:h-[120px]"
               />
             </Link>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setLanguage(language === "es" ? "en" : "es")}
-                className="border-black text-black hover:bg-black hover:text-white"
+                className="border-black text-black hover:bg-black hover:text-white text-xs sm:text-sm px-2 sm:px-4"
               >
-                <Languages className="h-4 w-4 mr-2" />
+                <Languages className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 {language === "es" ? "EN" : "ES"}
               </Button>
             </div>
@@ -292,8 +292,8 @@ export default function BrandBriefPage() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 pb-4 sm:pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Form Area */}
           <div className="lg:col-span-2">
             <AnimatePresence mode="wait">
@@ -301,8 +301,8 @@ export default function BrandBriefPage() {
             </AnimatePresence>
           </div>
 
-          {/* Preview Sidebar */}
-          <div className="lg:col-span-1">
+          {/* Preview Sidebar - Hidden on mobile */}
+          <div className="hidden lg:block lg:col-span-1">
             <PreviewPane 
               data={briefData} 
               language={language}
@@ -312,56 +312,28 @@ export default function BrandBriefPage() {
       </div>
 
       {/* Footer Actions */}
-      <footer className="bg-gray-50 py-6">
+      <footer className="bg-gray-50 py-4 sm:py-6">
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                onClick={handleLoadDraft}
-                disabled={!hasStoredData()}
-                className="border-[#CADCFF] text-black hover:bg-[#CADCFF] hover:text-black"
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                {getTranslation(language, "loadDraft")}
-              </Button>
-              
-              <Button
-                variant="outline"
-                onClick={handleStartFromTemplate}
-                className="border-[#CADCFF] text-black hover:bg-[#CADCFF] hover:text-black"
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                {getTranslation(language, "startFromTemplate")}
-              </Button>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                onClick={handleSave}
-                className="border-[#CADCFF] text-black hover:bg-[#CADCFF] hover:text-black"
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                {getTranslation(language, "save")}
-              </Button>
-              
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Button
                 variant="outline"
                 onClick={handleClear}
-                className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+                className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 text-xs sm:text-sm px-3 sm:px-4"
               >
-                <Trash2 className="h-4 w-4 mr-2" />
+                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 {getTranslation(language, "clear")}
               </Button>
-              
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-4">
               <a
                 href="https://www.instagram.com/sainttagency/?hl=es"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-black transition-colors"
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground hover:text-black transition-colors"
               >
-                <Instagram className="h-4 w-4" />
+                <Instagram className="h-3 w-3 sm:h-4 sm:w-4" />
                 @sainttagency
               </a>
             </div>
