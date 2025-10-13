@@ -1,0 +1,223 @@
+import { google } from "googleapis"
+import { type BrandBrief } from "./schemas"
+
+// Configuración de Google Sheets
+const SHEET_ID = process.env.NEXT_PUBLIC_SHEET_ID
+const ENABLE_SHEETS = process.env.ENABLE_SHEETS === "true"
+
+// Credenciales del Service Account (placeholder)
+const credentials = {
+  type: "service_account",
+  project_id: "saint-brand-brief",
+  private_key_id: "placeholder",
+  private_key: "-----BEGIN PRIVATE KEY-----\nplaceholder\n-----END PRIVATE KEY-----\n",
+  client_email: "placeholder@saint-brand-brief.iam.gserviceaccount.com",
+  client_id: "placeholder",
+  auth_uri: "https://accounts.google.com/o/oauth2/auth",
+  token_uri: "https://oauth2.googleapis.com/token",
+  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+  client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/placeholder%40saint-brand-brief.iam.gserviceaccount.com"
+}
+
+// Inicializar Google Sheets API
+function initializeSheets() {
+  if (!ENABLE_SHEETS || !SHEET_ID) {
+    throw new Error("Google Sheets integration not enabled or SHEET_ID not configured")
+  }
+  
+  const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets']
+  })
+  
+  return google.sheets({ version: 'v4', auth })
+}
+
+// Función para agregar una fila nueva
+export async function appendRow(data: BrandBrief): Promise<boolean> {
+  try {
+    if (!ENABLE_SHEETS || !SHEET_ID) {
+      console.log("Google Sheets integration disabled")
+      return false
+    }
+    
+    const sheets = initializeSheets()
+    
+    // Preparar los datos para la fila
+    const rowData = [
+      new Date().toISOString(), // Timestamp
+      data.id || "", // ID Brief
+      data.step1.commercialName || "", // Cliente
+      data.step1.mainSpecialty || "", // Especialidad
+      `${data.step1.city || ""}, ${data.step1.country || ""}`, // Ciudad/País
+      data.step2.objectives?.join(", ") || "", // Objetivos principales
+      JSON.stringify(data.step2.kpis || {}), // KPIs meta
+      data.step3.segments?.ageRange || "", // Público objetivo (edad)
+      data.step3.competitors?.map(c => c.name).join(", ") || "", // Competidores
+      data.step5.servicesToPromote?.join(", ") || "", // Servicios a promover
+      `${data.step4.jurisdiction || ""} - ${Object.entries(data.step4.compliance || {})
+        .filter(([_, value]) => value)
+        .map(([key, _]) => key.toUpperCase())
+        .join(", ")}`, // Jurisdicción & Cumplimiento
+      data.step4.medicalReview?.responsibleName || "", // Responsable de revisión médica
+      data.step6.toneOfVoice?.join(", ") || "", // Tonalidad de marca
+      data.step6.priorityChannels?.join(", ") || "", // Canales prioritarios
+      data.step2.monthlyBudget || "", // Presupuesto mensual
+      `${data.step7.keyContacts?.marketing || ""}`, // Contactos clave
+      data.status || "draft", // Estado
+      JSON.stringify(data) // JSON completo del brief
+    ]
+    
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: 'A:Q', // Ajustar según el número de columnas
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [rowData]
+      }
+    })
+    
+    console.log("Data successfully appended to Google Sheets")
+    return true
+    
+  } catch (error) {
+    console.error("Error appending to Google Sheets:", error)
+    return false
+  }
+}
+
+// Función para actualizar una fila existente
+export async function updateRow(id: string, data: BrandBrief): Promise<boolean> {
+  try {
+    if (!ENABLE_SHEETS || !SHEET_ID) {
+      console.log("Google Sheets integration disabled")
+      return false
+    }
+    
+    const sheets = initializeSheets()
+    
+    // Primero, buscar la fila con el ID correspondiente
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'B:B' // Columna B contiene el ID Brief
+    })
+    
+    const rows = response.data.values || []
+    let rowIndex = -1
+    
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i][0] === id) {
+        rowIndex = i + 1 // +1 porque las filas en Sheets empiezan en 1
+        break
+      }
+    }
+    
+    if (rowIndex === -1) {
+      console.log("Row not found, appending new row instead")
+      return await appendRow(data)
+    }
+    
+    // Preparar los datos actualizados
+    const rowData = [
+      new Date().toISOString(), // Timestamp
+      data.id || "", // ID Brief
+      data.step1.commercialName || "", // Cliente
+      data.step1.mainSpecialty || "", // Especialidad
+      `${data.step1.city || ""}, ${data.step1.country || ""}`, // Ciudad/País
+      data.step2.objectives?.join(", ") || "", // Objetivos principales
+      JSON.stringify(data.step2.kpis || {}), // KPIs meta
+      data.step3.segments?.ageRange || "", // Público objetivo (edad)
+      data.step3.competitors?.map(c => c.name).join(", ") || "", // Competidores
+      data.step5.servicesToPromote?.join(", ") || "", // Servicios a promover
+      `${data.step4.jurisdiction || ""} - ${Object.entries(data.step4.compliance || {})
+        .filter(([_, value]) => value)
+        .map(([key, _]) => key.toUpperCase())
+        .join(", ")}`, // Jurisdicción & Cumplimiento
+      data.step4.medicalReview?.responsibleName || "", // Responsable de revisión médica
+      data.step6.toneOfVoice?.join(", ") || "", // Tonalidad de marca
+      data.step6.priorityChannels?.join(", ") || "", // Canales prioritarios
+      data.step2.monthlyBudget || "", // Presupuesto mensual
+      `${data.step7.keyContacts?.marketing || ""}`, // Contactos clave
+      data.status || "draft", // Estado
+      JSON.stringify(data) // JSON completo del brief
+    ]
+    
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `A${rowIndex}:Q${rowIndex}`,
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [rowData]
+      }
+    })
+    
+    console.log(`Row ${rowIndex} successfully updated in Google Sheets`)
+    return true
+    
+  } catch (error) {
+    console.error("Error updating Google Sheets:", error)
+    return false
+  }
+}
+
+// Función para verificar si la integración está habilitada
+export function isSheetsEnabled(): boolean {
+  return ENABLE_SHEETS && !!SHEET_ID
+}
+
+// Función para obtener el estado de la integración
+export function getSheetsStatus(): { enabled: boolean; configured: boolean } {
+  return {
+    enabled: ENABLE_SHEETS,
+    configured: !!SHEET_ID
+  }
+}
+
+// Función para crear headers de la hoja (solo ejecutar una vez)
+export async function createSheetHeaders(): Promise<boolean> {
+  try {
+    if (!ENABLE_SHEETS || !SHEET_ID) {
+      console.log("Google Sheets integration disabled")
+      return false
+    }
+    
+    const sheets = initializeSheets()
+    
+    const headers = [
+      "Timestamp",
+      "ID Brief",
+      "Cliente",
+      "Especialidad", 
+      "Ciudad/País",
+      "Objetivos principales",
+      "KPIs meta",
+      "Público objetivo",
+      "Competidores",
+      "Servicios a promover",
+      "Jurisdicción & Cumplimiento",
+      "Responsable de revisión médica",
+      "Tonalidad de marca",
+      "Canales prioritarios",
+      "Presupuesto mensual",
+      "Contactos clave",
+      "Estado",
+      "JSON completo del brief"
+    ]
+    
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: 'A1:Q1',
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [headers]
+      }
+    })
+    
+    console.log("Headers successfully created in Google Sheets")
+    return true
+    
+  } catch (error) {
+    console.error("Error creating headers in Google Sheets:", error)
+    return false
+  }
+}
