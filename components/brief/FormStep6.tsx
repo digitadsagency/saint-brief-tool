@@ -73,7 +73,8 @@ export default function FormStep6({ data, language, onSubmit, onNext, onBack }: 
       : [...selectedObjectives, objective]
     
     setSelectedObjectives(newObjectives)
-    setValue("mainObjective", newObjectives as any, { shouldValidate: true, shouldDirty: true })
+    setValue("mainObjective", newObjectives, { shouldValidate: true, shouldDirty: true })
+    console.log("FormStep6 - Toggled objective:", objective, "New objectives:", newObjectives)
   }
 
   const onFormSubmit = (formData: MarketingGoals) => {
@@ -85,12 +86,14 @@ export default function FormStep6({ data, language, onSubmit, onNext, onBack }: 
   React.useEffect(() => {
     console.log("FormStep6 - isValid:", isValid)
     console.log("FormStep6 - errors:", errors)
+    console.log("FormStep6 - selectedObjectives:", selectedObjectives)
     console.log("FormStep6 - watched values:", {
       mainObjective: watch("mainObjective"),
       monthlyNewConsultations: watch("monthlyNewConsultations"),
       inspiringAccounts: watch("inspiringAccounts")
     })
-  }, [isValid, errors, watch])
+    console.log("FormStep6 - can advance:", selectedObjectives.length > 0)
+  }, [isValid, errors, watch, selectedObjectives])
 
   return (
     <motion.div

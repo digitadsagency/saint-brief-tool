@@ -44,13 +44,7 @@ export const differentiatorsSchema = z.object({
 
 // Paso 6 - Metas de marketing
 export const marketingGoalsSchema = z.object({
-  mainObjective: z.array(z.enum([
-    "mas_consultas",
-    "mejor_reputacion",
-    "nuevos_servicios",
-    "expansión_geografica",
-    "liderazgo_opinion"
-  ])).min(1, "Debes seleccionar al menos un objetivo"),
+  mainObjective: z.array(z.string()).min(1, "Debes seleccionar al menos un objetivo"),
   monthlyNewConsultations: z.number().min(1, "El número de consultas mensuales es requerido"),
   inspiringAccounts: z.array(z.string()).min(1, "Debes especificar al menos una cuenta que te inspire")
 })
