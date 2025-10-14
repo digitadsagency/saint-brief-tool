@@ -214,7 +214,7 @@ export async function POST(request: NextRequest) {
     // Configurar el correo
     const mailOptions = {
       from: process.env.GMAIL_EMAIL,
-      to: 'contacto@saintagency.com.mx', // Enviar a contacto@saintagency.com.mx
+      to: 'contacto@saintagency.com.mx, paolaloya16@gmail.com', // Enviar a ambos correos
       subject: `🎉 Nuevo Brand Brief - ${briefData.step1?.fullName || 'Cliente'} (${briefData.step1?.specialty || 'Especialidad'})`,
       text: createEmailText(briefData),
       html: createEmailHTML(briefData)

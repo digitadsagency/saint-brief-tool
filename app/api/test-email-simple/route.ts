@@ -27,7 +27,7 @@ export async function GET() {
     // Configurar correo de prueba
     const mailOptions = {
       from: process.env.GMAIL_EMAIL,
-      to: 'contacto@saintagency.com.mx',
+      to: 'contacto@saintagency.com.mx, paolaloya16@gmail.com',
       subject: '🧪 Prueba de Email - SAINT Brand Brief',
       text: 'Este es un correo de prueba para verificar que la configuración de email funciona correctamente.',
       html: `
@@ -36,6 +36,7 @@ export async function GET() {
           <p>Este es un correo de prueba para verificar que la configuración de email funciona correctamente.</p>
           <p><strong>Fecha:</strong> ${new Date().toLocaleString('es-ES')}</p>
           <p><strong>Estado:</strong> ✅ Sistema de email funcionando</p>
+          <p><strong>Destinatarios:</strong> contacto@saintagency.com.mx, paolaloya16@gmail.com</p>
         </div>
       `
     }
@@ -49,7 +50,7 @@ export async function GET() {
       messageId: info.messageId,
       details: {
         from: process.env.GMAIL_EMAIL,
-        to: 'contacto@saintagency.com.mx',
+        to: 'contacto@saintagency.com.mx, paolaloya16@gmail.com',
         subject: '🧪 Prueba de Email - SAINT Brand Brief'
       }
     })
