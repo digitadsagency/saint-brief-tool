@@ -62,14 +62,21 @@ export default function HomePage() {
                   Queremos entender quién eres como médico y qué te mueve. Cada respuesta nos ayudará a crear una estrategia que realmente se parezca a ti.
                 </p>
                 
-                <div className="flex justify-center">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link href="/brand-brief">
+                    <Button size="lg" className="w-full sm:w-auto bg-black text-white hover:bg-gray-800">
+                      Iniciar Brand Brief
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </Link>
+                  
                   <a
                     href="https://www.instagram.com/sainttagency/?hl=es"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full sm:w-auto"
                   >
-                    <Button size="lg" className="w-full sm:w-auto bg-black text-white hover:bg-gray-800">
+                    <Button variant="outline" size="lg" className="w-full sm:w-auto border-black text-black hover:bg-black hover:text-white">
                       Sobre nosotros
                       <ArrowRight className="h-4 w-4 ml-2" />
                     </Button>

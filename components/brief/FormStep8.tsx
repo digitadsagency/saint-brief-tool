@@ -89,8 +89,10 @@ export default function FormStep8({ data, briefData, language, onSubmit, onNext,
     }
   }
 
-  const addFormat = (format: string) => {
-    if (format && !bestFormats.includes(format)) {
+  const toggleFormat = (format: string) => {
+    if (bestFormats.includes(format)) {
+      setBestFormats(prev => prev.filter(f => f !== format))
+    } else {
       setBestFormats(prev => [...prev, format])
     }
   }
@@ -323,13 +325,20 @@ export default function FormStep8({ data, briefData, language, onSubmit, onNext,
                               ? 'border-[#C1FFDD] bg-[#C1FFDD]/20'
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
-                          onClick={() => addFormat(format)}
+                          onClick={() => toggleFormat(format)}
                         >
                           <div className="flex items-center gap-2">
-                            <Checkbox
-                              checked={bestFormats.includes(format)}
-                              onChange={() => addFormat(format)}
-                            />
+                            <div className={`w-4 h-4 border-2 rounded ${
+                              bestFormats.includes(format)
+                                ? 'bg-[#C1FFDD] border-[#C1FFDD]'
+                                : 'border-gray-300'
+                            }`}>
+                              {bestFormats.includes(format) && (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                                </div>
+                              )}
+                            </div>
                             <span className="text-sm">{format}</span>
                           </div>
                         </div>
