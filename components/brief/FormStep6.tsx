@@ -233,7 +233,7 @@ export default function FormStep6({ data, language, onSubmit, onNext, onBack }: 
               </Button>
               <Button 
                 type="submit" 
-                disabled={!isValid}
+                disabled={selectedObjectives.length === 0}
                 className="bg-black text-white hover:bg-gray-800"
               >
                 {getTranslation(language, "next")}

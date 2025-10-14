@@ -72,8 +72,10 @@ export default function FormStep8({ data, briefData, language, onSubmit, onNext,
     setValue("bestFormats", bestFormats)
   }, [platforms, bestFormats, setValue])
 
-  const addPlatform = (platform: string) => {
-    if (platform && !platforms.includes(platform)) {
+  const togglePlatform = (platform: string) => {
+    if (platforms.includes(platform)) {
+      setPlatforms(prev => prev.filter(p => p !== platform))
+    } else {
       setPlatforms(prev => [...prev, platform])
     }
   }
@@ -232,13 +234,20 @@ export default function FormStep8({ data, briefData, language, onSubmit, onNext,
                               ? 'border-[#C1FFDD] bg-[#C1FFDD]/20'
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
-                          onClick={() => addPlatform(platform)}
+                          onClick={() => togglePlatform(platform)}
                         >
                           <div className="flex items-center gap-2">
-                            <Checkbox
-                              checked={platforms.includes(platform)}
-                              onChange={() => addPlatform(platform)}
-                            />
+                            <div className={`w-4 h-4 border-2 rounded ${
+                              platforms.includes(platform)
+                                ? 'bg-[#C1FFDD] border-[#C1FFDD]'
+                                : 'border-gray-300'
+                            }`}>
+                              {platforms.includes(platform) && (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                                </div>
+                              )}
+                            </div>
                             <span className="text-sm">{platform}</span>
                           </div>
                         </div>
