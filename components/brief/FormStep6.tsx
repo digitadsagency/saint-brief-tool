@@ -73,22 +73,7 @@ export default function FormStep6({ data, language, onSubmit, onNext, onBack }: 
     
     setSelectedObjectives(newObjectives)
     setValue("mainObjective", newObjectives, { shouldValidate: true, shouldDirty: true })
-    console.log("FormStep6 - Toggled objective:", objective, "New objectives:", newObjectives)
   }
-
-
-  // Debug temporal para ver el estado del formulario
-  React.useEffect(() => {
-    console.log("FormStep6 - isValid:", isValid)
-    console.log("FormStep6 - errors:", errors)
-    console.log("FormStep6 - selectedObjectives:", selectedObjectives)
-    console.log("FormStep6 - watched values:", {
-      mainObjective: watch("mainObjective"),
-      monthlyNewConsultations: watch("monthlyNewConsultations"),
-      inspiringAccounts: watch("inspiringAccounts")
-    })
-    console.log("FormStep6 - can advance:", selectedObjectives.length > 0)
-  }, [isValid, errors, watch, selectedObjectives])
 
   return (
     <motion.div
