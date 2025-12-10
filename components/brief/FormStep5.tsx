@@ -28,10 +28,9 @@ export default function FormStep5({ data, language, onSubmit, onNext, onBack }: 
 
   const {
     register,
-    handleSubmit,
     setValue,
     watch,
-    formState: { errors, isValid }
+    formState: { errors }
   } = useForm<Differentiators>({
     resolver: zodResolver(differentiatorsSchema),
     defaultValues: data,
@@ -59,10 +58,6 @@ export default function FormStep5({ data, language, onSubmit, onNext, onBack }: 
     setValue("keyTechnologies", newTechnologies, { shouldValidate: true })
   }
 
-  const onFormSubmit = (formData: Differentiators) => {
-    onSubmit(formData)
-    onNext()
-  }
 
   return (
     <motion.div
@@ -79,7 +74,7 @@ export default function FormStep5({ data, language, onSubmit, onNext, onBack }: 
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-8">
-          <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+          <form className="space-y-6">
             {/* Qué te hace diferente */}
             <div className="space-y-2">
               <Label htmlFor="whatMakesDifferent" className="text-base font-medium flex items-center gap-2">
@@ -163,8 +158,12 @@ export default function FormStep5({ data, language, onSubmit, onNext, onBack }: 
                 {getTranslation(language, "back")}
               </Button>
               <Button 
-                type="submit" 
-                disabled={!isValid}
+                type="button" 
+                onClick={() => {
+                  const currentValues = watch()
+                  onSubmit(currentValues as Differentiators)
+                  onNext()
+                }}
                 className="bg-black text-white hover:bg-gray-800"
               >
                 {getTranslation(language, "next")}

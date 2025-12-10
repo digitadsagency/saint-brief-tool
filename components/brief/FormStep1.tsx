@@ -27,10 +27,9 @@ export function FormStep1({ data, language, onSubmit, onNext, onBack }: FormStep
 
   const {
     register,
-    handleSubmit,
     setValue,
     watch,
-    formState: { errors, isValid }
+    formState: { errors }
   } = useForm<BasicInfo>({
     resolver: zodResolver(basicInfoSchema),
     defaultValues: data,
@@ -54,8 +53,9 @@ export function FormStep1({ data, language, onSubmit, onNext, onBack }: FormStep
     setCities(prev => prev.filter(c => c !== city))
   }
 
-  const onFormSubmit = (formData: BasicInfo) => {
-    onSubmit(formData)
+  const handleNextClick = () => {
+    const currentValues = watch()
+    onSubmit(currentValues as BasicInfo)
     onNext()
   }
 
@@ -74,7 +74,7 @@ export function FormStep1({ data, language, onSubmit, onNext, onBack }: FormStep
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-8">
-          <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+          <form className="space-y-6">
             {/* Nombre completo */}
             <div className="space-y-2">
               <Label htmlFor="fullName" className="text-base font-medium">
@@ -201,8 +201,8 @@ export function FormStep1({ data, language, onSubmit, onNext, onBack }: FormStep
                 {getTranslation(language, "back")}
               </Button>
               <Button 
-                type="submit" 
-                disabled={!isValid}
+                type="button" 
+                onClick={handleNextClick}
                 className="bg-black text-white hover:bg-gray-800"
               >
                 {getTranslation(language, "next")}

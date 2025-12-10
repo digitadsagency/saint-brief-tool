@@ -33,10 +33,9 @@ const perceptionOptions = [
 export function FormStep2({ data, language, onSubmit, onNext, onBack }: FormStep2Props) {
   const {
     register,
-    handleSubmit,
     setValue,
     watch,
-    formState: { errors, isValid }
+    formState: { errors }
   } = useForm<IdentityStyle>({
     resolver: zodResolver(identityStyleSchema),
     defaultValues: data,
@@ -64,10 +63,6 @@ export function FormStep2({ data, language, onSubmit, onNext, onBack }: FormStep
     setValue("perception", newPerceptions as any, { shouldValidate: true })
   }
 
-  const onFormSubmit = (formData: IdentityStyle) => {
-    onSubmit(formData)
-    onNext()
-  }
 
   return (
     <motion.div
@@ -84,7 +79,7 @@ export function FormStep2({ data, language, onSubmit, onNext, onBack }: FormStep
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-8">
-          <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+          <form className="space-y-6">
             {/* Percepción */}
             <div className="space-y-6">
               <div className="space-y-2">
@@ -189,8 +184,12 @@ export function FormStep2({ data, language, onSubmit, onNext, onBack }: FormStep
                 {getTranslation(language, "back")}
               </Button>
               <Button 
-                type="submit" 
-                disabled={!isValid}
+                type="button" 
+                onClick={() => {
+                  const currentValues = watch()
+                  onSubmit(currentValues as IdentityStyle)
+                  onNext()
+                }}
                 className="bg-black text-white hover:bg-gray-800"
               >
                 {getTranslation(language, "next")}

@@ -28,10 +28,9 @@ export default function FormStep7({ data, language, onSubmit, onNext, onBack }: 
 
   const {
     register,
-    handleSubmit,
     setValue,
     watch,
-    formState: { errors, isValid }
+    formState: { errors }
   } = useForm<Storytelling>({
     resolver: zodResolver(storytellingSchema),
     defaultValues: data,
@@ -59,10 +58,6 @@ export default function FormStep7({ data, language, onSubmit, onNext, onBack }: 
     setValue("frequentQuestions", newQuestions, { shouldValidate: true })
   }
 
-  const onFormSubmit = (formData: Storytelling) => {
-    onSubmit(formData)
-    onNext()
-  }
 
   return (
     <motion.div
@@ -79,7 +74,7 @@ export default function FormStep7({ data, language, onSubmit, onNext, onBack }: 
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-8">
-          <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+          <form className="space-y-6">
             {/* Por qué elegiste tu especialidad */}
             <div className="space-y-2">
               <Label htmlFor="whySpecialty" className="text-base font-medium">
@@ -251,8 +246,12 @@ export default function FormStep7({ data, language, onSubmit, onNext, onBack }: 
                 {getTranslation(language, "back")}
               </Button>
               <Button 
-                type="submit" 
-                disabled={!isValid}
+                type="button" 
+                onClick={() => {
+                  const currentValues = watch()
+                  onSubmit(currentValues as Storytelling)
+                  onNext()
+                }}
                 className="bg-black text-white hover:bg-gray-800"
               >
                 {getTranslation(language, "next")}

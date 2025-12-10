@@ -36,10 +36,9 @@ export default function FormStep6({ data, language, onSubmit, onNext, onBack }: 
 
   const {
     register,
-    handleSubmit,
     setValue,
     watch,
-    formState: { errors, isValid }
+    formState: { errors }
   } = useForm<MarketingGoals>({
     resolver: zodResolver(marketingGoalsSchema),
     defaultValues: data,
@@ -77,10 +76,6 @@ export default function FormStep6({ data, language, onSubmit, onNext, onBack }: 
     console.log("FormStep6 - Toggled objective:", objective, "New objectives:", newObjectives)
   }
 
-  const onFormSubmit = (formData: MarketingGoals) => {
-    onSubmit(formData)
-    onNext()
-  }
 
   // Debug temporal para ver el estado del formulario
   React.useEffect(() => {
@@ -110,7 +105,7 @@ export default function FormStep6({ data, language, onSubmit, onNext, onBack }: 
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-8">
-          <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+          <form className="space-y-6">
             {/* Objetivos principales */}
             <div className="space-y-2">
               <Label className="text-base font-medium flex items-center gap-2">
@@ -235,8 +230,12 @@ export default function FormStep6({ data, language, onSubmit, onNext, onBack }: 
                 {getTranslation(language, "back")}
               </Button>
               <Button 
-                type="submit" 
-                disabled={selectedObjectives.length === 0}
+                type="button" 
+                onClick={() => {
+                  const currentValues = watch()
+                  onSubmit(currentValues as MarketingGoals)
+                  onNext()
+                }}
                 className="bg-black text-white hover:bg-gray-800"
               >
                 {getTranslation(language, "next")}
