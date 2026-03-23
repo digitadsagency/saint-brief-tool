@@ -32,6 +32,12 @@ function prepareDataForSheets(briefData: BrandBrief): string[] {
     (briefData.step3?.favoriteProcedures || []).join(', '),
     (briefData.step3?.highValueServices || []).join(', '),
     (briefData.step3?.accessibleServices || []).join(', '),
+    briefData.step3?.hasBeforeAfterCases === true ? 'Sí' : briefData.step3?.hasBeforeAfterCases === false ? 'No' : '',
+    briefData.step3?.mostCasesOf || '',
+    briefData.step3?.currentMonthlyCount || '',
+    briefData.step3?.desiredMonthlyAppointments || '',
+    briefData.step3?.desiredMonthlySurgeries || '',
+    briefData.step3?.hasOwnAssistant || '',
     
     // Paso 4 - Paciente ideal
     briefData.step4?.averageAge || '',

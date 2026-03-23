@@ -74,6 +74,12 @@ function createEmailHTML(briefData: BrandBrief): string {
           <div class="field"><strong>Procedimientos Favoritos:</strong> ${(briefData.step3?.favoriteProcedures || []).join(', ') || 'No especificados'}</div>
           <div class="field"><strong>Servicios de Alto Valor:</strong> ${(briefData.step3?.highValueServices || []).join(', ') || 'No especificados'}</div>
           <div class="field"><strong>Servicios Accesibles:</strong> ${(briefData.step3?.accessibleServices || []).join(', ') || 'No especificados'}</div>
+          <div class="field"><strong>¿Tiene casos de antes y después?</strong> ${briefData.step3?.hasBeforeAfterCases === true ? 'Sí' : briefData.step3?.hasBeforeAfterCases === false ? 'No' : 'No respondido'}</div>
+          <div class="field"><strong>Procedimiento con más casos:</strong> ${briefData.step3?.mostCasesOf || 'No especificado'}</div>
+          <div class="field"><strong>Cirugías/citas actuales al mes:</strong> ${briefData.step3?.currentMonthlyCount || 'No especificado'}</div>
+          <div class="field"><strong>Citas deseadas al mes:</strong> ${briefData.step3?.desiredMonthlyAppointments || 'No especificado'}</div>
+          <div class="field"><strong>Cirugías deseadas al mes:</strong> ${briefData.step3?.desiredMonthlySurgeries || 'No especificado'}</div>
+          <div class="field"><strong>¿Tiene asistente propia?</strong> ${briefData.step3?.hasOwnAssistant || 'No especificado'}</div>
         </div>
 
         <div class="section">
@@ -151,6 +157,12 @@ Fecha: ${timestamp}
 - Procedimientos Favoritos: ${(briefData.step3?.favoriteProcedures || []).join(', ') || 'No especificados'}
 - Servicios de Alto Valor: ${(briefData.step3?.highValueServices || []).join(', ') || 'No especificados'}
 - Servicios Accesibles: ${(briefData.step3?.accessibleServices || []).join(', ') || 'No especificados'}
+- ¿Tiene casos de antes y después?: ${briefData.step3?.hasBeforeAfterCases === true ? 'Sí' : briefData.step3?.hasBeforeAfterCases === false ? 'No' : 'No respondido'}
+- Procedimiento con más casos: ${briefData.step3?.mostCasesOf || 'No especificado'}
+- Cirugías/citas actuales al mes: ${briefData.step3?.currentMonthlyCount || 'No especificado'}
+- Citas deseadas al mes: ${briefData.step3?.desiredMonthlyAppointments || 'No especificado'}
+- Cirugías deseadas al mes: ${briefData.step3?.desiredMonthlySurgeries || 'No especificado'}
+- ¿Tiene asistente propia?: ${briefData.step3?.hasOwnAssistant || 'No especificado'}
 
 👤 PACIENTE IDEAL:
 - Edad Promedio: ${briefData.step4?.averageAge || 'No especificada'}
