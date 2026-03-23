@@ -26,7 +26,13 @@ export const identityStyleSchema = z.object({
 export const proceduresBusinessSchema = z.object({
   favoriteProcedures: z.array(z.string()).min(2, "Debes especificar al menos 2 procedimientos favoritos").max(3, "Máximo 3 procedimientos favoritos"),
   highValueServices: z.array(z.string()).min(1, "Debes especificar al menos un servicio de alto valor"),
-  accessibleServices: z.array(z.string()).min(1, "Debes especificar al menos un servicio accesible")
+  accessibleServices: z.array(z.string()).min(1, "Debes especificar al menos un servicio accesible"),
+  hasBeforeAfterCases: z.boolean().optional(),
+  mostCasesOf: z.string().min(1, "Este campo es requerido"),
+  currentMonthlyCount: z.string().optional(),
+  desiredMonthlyAppointments: z.string().optional(),
+  desiredMonthlySurgeries: z.string().optional(),
+  hasOwnAssistant: z.string().min(1, "Este campo es requerido")
 })
 
 // Paso 4 - Paciente ideal
@@ -124,7 +130,13 @@ export const templateData: Partial<BrandBrief> = {
   step3: {
     favoriteProcedures: ["Limpieza facial profunda", "Tratamiento anti-edad", "Dermatoscopía digital"],
     highValueServices: ["Láser fraccionado", "Botox", "Rellenos de ácido hialurónico"],
-    accessibleServices: ["Consulta dermatológica", "Limpieza facial", "Tratamiento de acné"]
+    accessibleServices: ["Consulta dermatológica", "Limpieza facial", "Tratamiento de acné"],
+    hasBeforeAfterCases: true,
+    mostCasesOf: "Limpieza facial profunda",
+    currentMonthlyCount: "30",
+    desiredMonthlyAppointments: "50",
+    desiredMonthlySurgeries: "10",
+    hasOwnAssistant: "Sí, tengo una asistente de tiempo completo"
   },
   step4: {
     averageAge: "25-45",

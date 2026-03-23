@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { X, Plus, Star, DollarSign, Gift } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { X, Plus, Star, DollarSign, Gift, Camera, TrendingUp, Users } from "lucide-react"
 import { proceduresBusinessSchema, type ProceduresBusiness } from "@/lib/schemas"
 import { type Language, getTranslation } from "@/lib/i18n"
 
@@ -244,6 +245,114 @@ export default function FormStep3({ data, language, onSubmit, onNext, onBack }: 
               </div>
               {errors.accessibleServices && (
                 <p className="text-sm text-red-500">{errors.accessibleServices.message}</p>
+              )}
+            </div>
+
+            {/* Casos de antes y después */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium flex items-center gap-2">
+                <Camera className="h-4 w-4" />
+                ¿Tienes casos de antes y después?
+                <span className="text-sm font-normal text-muted-foreground">(Si eres clínico no aplica)</span>
+              </Label>
+              <div className="flex gap-6">
+                {[{ value: true, label: "Sí" }, { value: false, label: "No" }].map(({ value, label }) => (
+                  <div key={label} className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      id={`beforeAfter_${label}`}
+                      name="hasBeforeAfterCases"
+                      checked={watch("hasBeforeAfterCases") === value}
+                      onChange={() => setValue("hasBeforeAfterCases" as any, value)}
+                      className="rounded"
+                    />
+                    <Label htmlFor={`beforeAfter_${label}`} className="text-sm cursor-pointer">
+                      {label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Procedimiento con más casos */}
+            <div className="space-y-2">
+              <Label htmlFor="mostCasesOf" className="text-base font-medium flex items-center gap-2">
+                <Star className="h-4 w-4" />
+                ¿De qué procedimiento tienes más casos? *
+              </Label>
+              <Textarea
+                id="mostCasesOf"
+                {...register("mostCasesOf")}
+                placeholder="Ej: Rinoplastia, limpieza facial, botox..."
+                rows={2}
+                className="w-full"
+              />
+              {errors.mostCasesOf && (
+                <p className="text-sm text-red-500">{errors.mostCasesOf.message}</p>
+              )}
+            </div>
+
+            {/* Cirugías/citas actuales */}
+            <div className="space-y-2">
+              <Label htmlFor="currentMonthlyCount" className="text-base font-medium flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                ¿Cuántas cirugías (o citas) realizas hoy en día mensualmente?
+              </Label>
+              <Input
+                id="currentMonthlyCount"
+                {...register("currentMonthlyCount")}
+                placeholder="Ej: 20"
+                className="w-full"
+              />
+            </div>
+
+            {/* Cirugías/citas deseadas */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                ¿Cuántas cirugías o citas quieres?
+              </Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label htmlFor="desiredMonthlyAppointments" className="text-sm text-muted-foreground">
+                    Citas
+                  </Label>
+                  <Input
+                    id="desiredMonthlyAppointments"
+                    {...register("desiredMonthlyAppointments")}
+                    placeholder="Ej: 50"
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="desiredMonthlySurgeries" className="text-sm text-muted-foreground">
+                    Cirugías
+                  </Label>
+                  <Input
+                    id="desiredMonthlySurgeries"
+                    {...register("desiredMonthlySurgeries")}
+                    placeholder="Ej: 10"
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Asistente propia */}
+            <div className="space-y-2">
+              <Label htmlFor="hasOwnAssistant" className="text-base font-medium flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                ¿Tienes asistente propia? *
+              </Label>
+              <Textarea
+                id="hasOwnAssistant"
+                {...register("hasOwnAssistant")}
+                placeholder="Ej: Sí, tengo una asistente de tiempo completo / No, trabajo solo..."
+                rows={2}
+                className="w-full"
+              />
+              {errors.hasOwnAssistant && (
+                <p className="text-sm text-red-500">{errors.hasOwnAssistant.message}</p>
               )}
             </div>
 

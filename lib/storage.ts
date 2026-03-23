@@ -134,7 +134,13 @@ export function createEmptyBrief(): BrandBrief {
     step3: {
       favoriteProcedures: [],
       highValueServices: [],
-      accessibleServices: []
+      accessibleServices: [],
+      hasBeforeAfterCases: undefined,
+      mostCasesOf: "",
+      currentMonthlyCount: "",
+      desiredMonthlyAppointments: "",
+      desiredMonthlySurgeries: "",
+      hasOwnAssistant: ""
     },
     step4: {
       averageAge: "",
