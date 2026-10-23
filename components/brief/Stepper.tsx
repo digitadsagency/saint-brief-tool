@@ -8,10 +8,11 @@ interface StepperProps {
   currentStep: number
   totalSteps: number
   language: Language
+  stepTitles?: string[]
 }
 
-export function Stepper({ currentStep, totalSteps, language }: StepperProps) {
-  const steps = [
+export function Stepper({ currentStep, totalSteps, language, stepTitles }: StepperProps) {
+  const defaultSteps = [
     { number: 1, title: "step1Title" },
     { number: 2, title: "step2Title" },
     { number: 3, title: "step3Title" },
@@ -21,6 +22,9 @@ export function Stepper({ currentStep, totalSteps, language }: StepperProps) {
     { number: 7, title: "step7Title" },
     { number: 8, title: "step8Title" }
   ]
+  const steps = stepTitles
+    ? stepTitles.map((title, index) => ({ number: index + 1, title }))
+    : defaultSteps
 
   const progress = (currentStep / totalSteps) * 100
 
@@ -77,7 +81,7 @@ export function Stepper({ currentStep, totalSteps, language }: StepperProps) {
                           : "text-gray-500"
                       }`}
                     >
-                      {getTranslation(language, step.title as any)}
+                      {stepTitles ? step.title : getTranslation(language, step.title as any)}
                     </p>
                   </div>
                 </div>
@@ -137,7 +141,7 @@ export function Stepper({ currentStep, totalSteps, language }: StepperProps) {
                         : "text-gray-500"
                     }`}
                   >
-                    {getTranslation(language, step.title as any)}
+                      {stepTitles ? step.title : getTranslation(language, step.title as any)}
                   </p>
                 </div>
               </div>

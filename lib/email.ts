@@ -1,7 +1,5 @@
-import { BrandBrief } from './schemas'
-
 // Función para enviar correo usando nuestra API route
-export async function sendEmailNotification(briefData: BrandBrief): Promise<{ success: boolean; message: string }> {
+export async function sendEmailNotification(briefData: unknown): Promise<{ success: boolean; message: string }> {
   try {
     console.log('Enviando notificación por correo...')
     

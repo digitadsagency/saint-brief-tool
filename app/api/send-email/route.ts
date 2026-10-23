@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { BrandBrief } from '@/lib/schemas'
+import { briefTypeLabel, createPackageEmailHTML, createPackageEmailText, isPackageBrief } from '@/lib/briefs/format'
 const nodemailer = require('nodemailer')
 
 // Función para crear el HTML del correo
@@ -211,8 +212,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Obtener los datos del request
-    const briefData: BrandBrief = await request.json()
+    const briefData = await request.json()
+    const isPackage = isPackageBrief(briefData)
+    const clientName = isPackage
+      ? briefData.basic?.fullName || 'Cliente'
+      : (briefData as BrandBrief).step1?.fullName || 'Cliente'
+    const specialty = isPackage
+      ? briefData.basic?.specialty || 'Especialidad'
+      : (briefData as BrandBrief).step1?.specialty || 'Especialidad'
+    const typeLabel = isPackage ? briefTypeLabel(briefData) : 'Brand Brief'
     
     // Crear el transporter de nodemailer
     const transporter = nodemailer.createTransport({
@@ -227,9 +235,9 @@ export async function POST(request: NextRequest) {
     const mailOptions = {
       from: process.env.GMAIL_EMAIL,
       to: 'contacto@saintagency.com.mx, paolaloya16@gmail.com', // Enviar a ambos correos
-      subject: `🎉 Nuevo Brand Brief - ${briefData.step1?.fullName || 'Cliente'} (${briefData.step1?.specialty || 'Especialidad'})`,
-      text: createEmailText(briefData),
-      html: createEmailHTML(briefData)
+      subject: `Nuevo ${typeLabel} - ${clientName} (${specialty})`,
+      text: isPackage ? createPackageEmailText(briefData) : createEmailText(briefData as BrandBrief),
+      html: isPackage ? createPackageEmailHTML(briefData) : createEmailHTML(briefData as BrandBrief)
     }
 
     // Enviar el correo

@@ -1,7 +1,5 @@
-import { BrandBrief } from './schemas'
-
 // Función para enviar datos a Google Sheets usando nuestra API route
-export async function sendToGoogleSheets(briefData: BrandBrief): Promise<{ success: boolean; message: string }> {
+export async function sendToGoogleSheets(briefData: unknown): Promise<{ success: boolean; message: string }> {
   try {
     console.log('Enviando datos a Google Sheets...')
     

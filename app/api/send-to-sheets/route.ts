@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { google } from 'googleapis'
 import { BrandBrief } from '@/lib/schemas'
+import { briefTypeLabel, isPackageBrief, packageBriefHeaders, packageBriefRows } from '@/lib/briefs/format'
 
 // Configuración de Google Sheets
 const GOOGLE_SHEETS_CONFIG = {
@@ -9,66 +10,72 @@ const GOOGLE_SHEETS_CONFIG = {
 }
 
 // Función para preparar los datos en formato de fila para Google Sheets
-function prepareDataForSheets(briefData: BrandBrief): string[] {
+function prepareDataForSheets(briefData: BrandBrief | Record<string, unknown>): string[] {
   const timestamp = new Date().toLocaleString('es-ES')
+
+  if (isPackageBrief(briefData)) {
+    return [timestamp, ...packageBriefRows(briefData)]
+  }
+
+  const legacy = briefData as BrandBrief
   
   return [
     // Timestamp
     timestamp,
     
     // Paso 1 - Datos básicos
-    briefData.step1?.fullName || '',
-    briefData.step1?.preferredName || '',
-    briefData.step1?.specialty || '',
-    (briefData.step1?.cities || []).join(', '),
-    briefData.step1?.yearsExperience?.toString() || '',
+    legacy.step1?.fullName || '',
+    legacy.step1?.preferredName || '',
+    legacy.step1?.specialty || '',
+    (legacy.step1?.cities || []).join(', '),
+    legacy.step1?.yearsExperience?.toString() || '',
     
     // Paso 2 - Identidad y estilo
-    (briefData.step2?.perception || []).join(', '),
-    briefData.step2?.whatNotAre || '',
-    briefData.step2?.philosophy || '',
+    (legacy.step2?.perception || []).join(', '),
+    legacy.step2?.whatNotAre || '',
+    legacy.step2?.philosophy || '',
     
     // Paso 3 - Procedimientos y negocio
-    (briefData.step3?.favoriteProcedures || []).join(', '),
-    (briefData.step3?.highValueServices || []).join(', '),
-    (briefData.step3?.accessibleServices || []).join(', '),
-    briefData.step3?.hasBeforeAfterCases === true ? 'Sí' : briefData.step3?.hasBeforeAfterCases === false ? 'No' : '',
-    briefData.step3?.mostCasesOf || '',
-    briefData.step3?.currentMonthlyCount || '',
-    briefData.step3?.desiredMonthlyAppointments || '',
-    briefData.step3?.desiredMonthlySurgeries || '',
-    briefData.step3?.hasOwnAssistant || '',
+    (legacy.step3?.favoriteProcedures || []).join(', '),
+    (legacy.step3?.highValueServices || []).join(', '),
+    (legacy.step3?.accessibleServices || []).join(', '),
+    legacy.step3?.hasBeforeAfterCases === true ? 'Sí' : legacy.step3?.hasBeforeAfterCases === false ? 'No' : '',
+    legacy.step3?.mostCasesOf || '',
+    legacy.step3?.currentMonthlyCount || '',
+    legacy.step3?.desiredMonthlyAppointments || '',
+    legacy.step3?.desiredMonthlySurgeries || '',
+    legacy.step3?.hasOwnAssistant || '',
     
     // Paso 4 - Paciente ideal
-    briefData.step4?.averageAge || '',
-    briefData.step4?.predominantGender || '',
-    (briefData.step4?.commonFears || []).join(', '),
+    legacy.step4?.averageAge || '',
+    legacy.step4?.predominantGender || '',
+    (legacy.step4?.commonFears || []).join(', '),
     
     // Paso 5 - Diferenciadores
-    briefData.step5?.whatMakesDifferent || '',
-    (briefData.step5?.keyTechnologies || []).join(', '),
+    legacy.step5?.whatMakesDifferent || '',
+    (legacy.step5?.keyTechnologies || []).join(', '),
     
     // Paso 6 - Metas de marketing
-    (briefData.step6?.mainObjective || []).join(', '),
-    briefData.step6?.monthlyNewConsultations?.toString() || '',
-    (briefData.step6?.inspiringAccounts || []).join(', '),
+    (legacy.step6?.mainObjective || []).join(', '),
+    legacy.step6?.monthlyNewConsultations?.toString() || '',
+    (legacy.step6?.inspiringAccounts || []).join(', '),
     
     // Paso 7 - Storytelling
-    briefData.step7?.whySpecialty || '',
-    briefData.step7?.markedCase || '',
-    briefData.step7?.commonPhrase || '',
-    briefData.step7?.fiveYearVision || '',
-    briefData.step7?.mythToDebunk || '',
-    (briefData.step7?.frequentQuestions || []).join(', '),
-    briefData.step7?.curiosityTopic || '',
+    legacy.step7?.whySpecialty || '',
+    legacy.step7?.markedCase || '',
+    legacy.step7?.commonPhrase || '',
+    legacy.step7?.fiveYearVision || '',
+    legacy.step7?.mythToDebunk || '',
+    (legacy.step7?.frequentQuestions || []).join(', '),
+    legacy.step7?.curiosityTopic || '',
     
     // Paso 8 - Historial de anuncios
-    briefData.step8?.hasDoneAds ? 'Sí' : 'No',
-    (briefData.step8?.platforms || []).join(', '),
-    briefData.step8?.investmentAmount || '',
-    briefData.step8?.results || '',
-    (briefData.step8?.bestFormats || []).join(', '),
-    briefData.step8?.whatDidntWork || ''
+    legacy.step8?.hasDoneAds ? 'Sí' : 'No',
+    (legacy.step8?.platforms || []).join(', '),
+    legacy.step8?.investmentAmount || '',
+    legacy.step8?.results || '',
+    (legacy.step8?.bestFormats || []).join(', '),
+    legacy.step8?.whatDidntWork || ''
   ]
 }
 
@@ -83,7 +90,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Obtener los datos del request
-    const briefData: BrandBrief = await request.json()
+    const briefData = await request.json()
     
     // Preparar los datos para enviar
     const dataToSend = prepareDataForSheets(briefData)
@@ -108,15 +115,45 @@ export async function POST(request: NextRequest) {
     })
 
     const sheets = google.sheets({ version: 'v4', auth })
+    const sheetName = isPackageBrief(briefData)
+      ? briefTypeLabel(briefData)
+      : GOOGLE_SHEETS_CONFIG.SHEET_NAME
+
+    const spreadsheet = await sheets.spreadsheets.get({
+      spreadsheetId: GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID,
+    })
+    const sheetExists = spreadsheet.data.sheets?.some(
+      (sheet) => sheet.properties?.title === sheetName
+    )
+
+    if (!sheetExists) {
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId: GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID,
+        requestBody: {
+          requests: [{ addSheet: { properties: { title: sheetName } } }],
+        },
+      })
+
+      if (isPackageBrief(briefData)) {
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID,
+          range: `${sheetName}!A1`,
+          valueInputOption: 'RAW',
+          requestBody: {
+            values: [['Timestamp', ...packageBriefHeaders()]],
+          },
+        })
+      }
+    }
     
     // Obtener el rango actual para encontrar la siguiente fila vacía
     const rangeResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID,
-      range: `${GOOGLE_SHEETS_CONFIG.SHEET_NAME}!A:A`,
+      range: `${sheetName}!A:A`,
     })
 
     const nextRow = (rangeResponse.data.values?.length || 0) + 1
-    const appendRange = `${GOOGLE_SHEETS_CONFIG.SHEET_NAME}!A${nextRow}`
+    const appendRange = `${sheetName}!A${nextRow}`
     
     console.log(`Escribiendo en fila ${nextRow}`)
     
